@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <title>天气</title>
+    <style>
+        body{
+            background: linear-gradient(to right, #f0d4f1, skyblue);
+        }
+        .branch{
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 15px 30px;
+            background-color: #4370d7;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            transition: border-color .3s ease;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .branch:hover{
+            border-color: white;
+        }
+        .container{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            padding-bottom: 50px;
+            height: 60vh;
+            transform: translate(-50%, -50%);
+        }
+        input{
+            margin-left: 15px;
+            border: 0;
+            padding: 10px 20px;
+            background-color: #e3e3e3;
+            color: #898989;
+            font-size: 28px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all .3s ease;
+            border-radius: 10px;
+        }
+        button{
+            border: 0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-left: 5px;
+            background-color: #f1f1f1;
+            color: #080808;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 25px;
+        }
+        input:focus{
+            border: 0;
+            background-color: white;
+            color: gray;
+        }
+        .card{
+            margin-top: 10px;
+            padding: 15px;
+            background-color: white;
+            display: flex;
+            border-radius: 15px;
+        }
+        .card > div{
+            color: rgb(173, 173, 173);
+            font-weight: 500;
+            padding: 20px;
+        }
+        .smallCard{
+            display: flex;
+            align-items: center;
+            flex-direction:row;
+            flex-wrap: wrap;
+            flex: 1;
+            height: 100%;
+        }
+        .smallCard>div{
+            padding: 10px;
+            width: calc(50% - 20px);
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all .4s ease;
+        }
+        .data{
+            font-size: 28px;
+            font-weight: bolder;
+        }
+        .curCity{
+            height: 100px;
+            width: fit-content;
+            margin: auto 0;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: space-around;
+            transition: all .4s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" style="background-repeat: no-repeat; background-size: cover; transition: all .4s ease-in;">
+        <div class="container">
+            <div class="branch">实时天气查询</div>
+            <div style="margin: 0 auto;">
+                <input v-model="city" placeholder="输入城市名查询天气" type="text"><button @click="getWeather">查询</button>
+            </div>
+            <div class="card">
+                <div class="curCity"><span class="data">{{ weatherInfo.city }}</span><span class="label">当前城市</span></div>
+                <div style="flex: 1" class="smallCard">
+                    <div class="curWea"><span class="data">{{ weatherInfo.wea }}</span> <span class="label">天气</span></div>
+                    <div class="curTem"><span class="data">{{ weatherInfo.tem }}℃</span><span class="label">温度</span> </div>
+                    <div class="curWind"><span class="data">{{ weatherInfo.win }}</span><span class="label">风向</span></div>
+                    <div class="curAir"><span class="data">{{ weatherInfo.air }}</span><span class="label">空气湿度</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./request.js"></script>
+    <script type="module">
+        import { getCityWeatherAPI } from './request.js'
+        new Vue({
+            el: "#app",
+            data: {
+                city: '新都',
+                backgroundStyle: {
+                    backgroundImage: '',
+                },
+                weatherInfo: {
+                    cityId: '',
+                    city: '',
+                    update_Time: '',
+                    wea: '',
+                    wea_img: '',
+                    tem: '',
+                    tem_day: '',
+                    tem_night: '',
+                    win: '',
+                    win_speed: "",
+                    win_meter: '',
+                    air: ''
+                },
+            },
+            methods: {
+                getWeather(){
+                    getCityWeatherAPI(this.city)
+                    .then((data) => {
+                        this.weatherInfo = data
+                    })
+                }
+            },
+            created(){
+                this.getWeather()
+            },
+        })
+    </script>
+</body>
+</html>
